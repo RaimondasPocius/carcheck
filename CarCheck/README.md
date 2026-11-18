@@ -1,4 +1,4 @@
-# CarCheck – used car inspection app (Audi-style UI, LT/EN)
+# CarCheck – used car inspection app (Audi-inspired dark theme, LT/EN)
 
 Native Android shell (WebView) + web app in `app/src/main/assets/www/`.
 **Almost every change happens only in that folder.**
@@ -34,3 +34,8 @@ Score 1–10 = quality / 10. Green "worth buying" at ≥ 85 %. Repair investment
 
 ## Prompt for Claude when updating
 "Here is my CarCheck project. Change X in the files under `app/src/main/assets/www/`, return full changed files."
+
+## Saved reports & PDF
+- Burger button (top left) lists saved reports; a report is saved automatically when the result screen is opened. Stored in the phone's WebView localStorage.
+- "Create PDF report" opens Android's print dialog: choose **Save as PDF** (then share the file from Files).
+- PDF layout: `reportHtml()` in `www/app.js`; native bridge: `printReport()` in `MainActivity.java`.

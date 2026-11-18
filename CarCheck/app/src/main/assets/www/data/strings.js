@@ -9,7 +9,7 @@ window.STRINGS = {
     plate: "Valstybinis numeris",
     date: "Patikros data",
     model: "Markė ir modelis",
-    model_ph: "pvz. Audi A4 Avant 40 TDI",
+    model_ph: "pvz. Škoda Octavia 2.0 TDI",
     engine: "Variklis (tūris, galia, kuras)",
     engine_ph: "pvz. 2.0 TDI, 140 kW, dyzelis",
     year: "Pagaminimo metai",
@@ -45,7 +45,7 @@ window.STRINGS = {
     no_defects: "Trūkumų nerasta",
     crit_title: "Rasti kritiniai trūkumai",
     unanswered: "Neatsakyta punktų: {n}. Rezultatas gali būti netikslus.",
-    share: "Dalintis ataskaita",
+    share: "Sukurti PDF ataskaitą",
     edit: "Redaguoti atsakymus",
     copied: "Ataskaita nukopijuota",
     verdict_buy: "Verta pirkti",
@@ -54,7 +54,15 @@ window.STRINGS = {
     verdict_avoid: "Nepirkti",
     disclaimer: "Sąmatos orientacinės (EUR). Realias kainas patikslinkite servise.",
     vehicle: "Automobilis",
-    no_cost: "kaina nežinoma"
+    no_cost: "kaina nežinoma",
+    saved: "Išsaugotos ataskaitos",
+    no_saved: "Išsaugotų ataskaitų dar nėra. Ataskaita išsaugoma automatiškai, kai atidarote rezultatą.",
+    del: "Ištrinti",
+    copy_text: "Kopijuoti tekstą",
+    pdf_title: "Automobilio patikros ataskaita",
+    pdf_mileage: "Rida",
+    pdf_price: "Prašoma kaina",
+    pdf_sheet_fail: "Nepavyko sukurti PDF"
   },
   en: {
     tagline: "Used car inspection",
@@ -65,7 +73,7 @@ window.STRINGS = {
     plate: "Registration plate",
     date: "Inspection date",
     model: "Make & model",
-    model_ph: "e.g. Audi A4 Avant 40 TDI",
+    model_ph: "e.g. Skoda Octavia 2.0 TDI",
     engine: "Engine (size, power, fuel)",
     engine_ph: "e.g. 2.0 TDI, 140 kW, diesel",
     year: "Year of manufacture",
@@ -101,7 +109,7 @@ window.STRINGS = {
     no_defects: "No issues found",
     crit_title: "Critical issues found",
     unanswered: "Unanswered items: {n}. The result may be inaccurate.",
-    share: "Share report",
+    share: "Create PDF report",
     edit: "Edit answers",
     copied: "Report copied",
     verdict_buy: "Worth buying",
@@ -110,6 +118,14 @@ window.STRINGS = {
     verdict_avoid: "Do not buy",
     disclaimer: "Estimates are indicative (EUR). Confirm real prices with a workshop.",
     vehicle: "Vehicle",
-    no_cost: "cost unknown"
+    no_cost: "cost unknown",
+    saved: "Saved reports",
+    no_saved: "No saved reports yet. A report is saved automatically when you open the result.",
+    del: "Delete",
+    copy_text: "Copy text",
+    pdf_title: "Vehicle inspection report",
+    pdf_mileage: "Mileage",
+    pdf_price: "Asking price",
+    pdf_sheet_fail: "Could not create PDF"
   }
 };

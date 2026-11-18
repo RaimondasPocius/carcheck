@@ -156,3 +156,19 @@ h2 { margin: 0 0 12px; font-size: 12px; letter-spacing: .24em; text-transform: u
 .toast { position: fixed; left: 50%; bottom: calc(100px + var(--safe-b)); transform: translateX(-50%); background: var(--text); color: #000; padding: 10px 18px; font-size: 13px; font-weight: 600; letter-spacing: .06em; z-index: 30; }
 @keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 main > * { animation: fadein .25s ease both; }
+
+/* burger + saved reports */
+.tl { display: flex; align-items: center; gap: 6px; }
+.burger { width: 44px; height: 44px; margin-left: -10px; background: none; border: 0; display: grid; place-items: center; cursor: pointer; color: var(--text); }
+.burger svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: square; }
+.hrow { display: flex; align-items: stretch; border-top: 1px solid var(--line); }
+.hrow:first-of-type { border-top: 0; }
+.hmain { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; background: none; border: 0; padding: 13px 0; text-align: left; cursor: pointer; font-size: 15px; }
+.hmain .hn { flex: 1; min-width: 0; }
+.hmain .hn b { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hmain .hn span { display: block; color: var(--mute); font-size: 12px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hmain .hp { font-size: 20px; font-weight: 300; font-variant-numeric: tabular-nums; }
+.hmain .hp small { font-size: 11px; }
+.hdel { flex: none; width: 44px; background: none; border: 0; color: var(--mute); cursor: pointer; display: grid; place-items: center; }
+.hdel svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; }
+.hempty { color: var(--mute); padding: 10px 0 6px; }

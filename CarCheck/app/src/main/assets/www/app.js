@@ -16,12 +16,14 @@
     var d = new Date();
     return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
   }
-  function fresh() { return { lang: CFG.defaultLang, step: "info", info: { date: today() }, answers: {} }; }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function fresh() { return { id: uid(), lang: CFG.defaultLang, step: "info", info: { date: today() }, answers: {} }; }
   function load() {
     try { var s = localStorage.getItem(KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; }
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
   var state = load() || fresh();
+  if (!state.id) state.id = uid();
   if (!state.info) state.info = {};
   if (!state.info.date) state.info.date = today();
   if (state.step !== "info" && state.step !== "result" && !CATS[state.step]) state.step = "info";
@@ -102,7 +104,11 @@
         onclick: function () { state.lang = l[0]; save(); render(); }
       }, [l[1]]);
     }));
-    return h("div", { class: "topbar" }, [h("div", { class: "brand" }, [h("i"), "CarCheck"]), lang]);
+    var burger = h("button", {
+      class: "burger", "aria-label": t("saved"), onclick: openHistory,
+      html: '<svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>'
+    });
+    return h("div", { class: "topbar" }, [h("div", { class: "tl" }, [burger, h("div", { class: "brand" }, [h("i"), "CarCheck"])]), lang]);
   }
   function progress() {
     var wrap = h("div", { class: "prog" });
@@ -114,6 +120,42 @@
     });
     return wrap;
   }
+  // ---------- saved reports (history) ----------
+  var HKEY = "carcheck_history_v1";
+  function loadHist() { try { var s = localStorage.getItem(HKEY); return s ? JSON.parse(s) : []; } catch (e) { return []; } }
+  function saveHist(l) { try { localStorage.setItem(HKEY, JSON.stringify(l)); } catch (e) {} }
+  function upsertHist(r) {
+    var l = loadHist();
+    var rec = { id: state.id, saved: Date.now(), info: state.info, answers: state.answers, quality: r.quality, score: r.score, color: r.band.color };
+    var found = false;
+    for (var i = 0; i < l.length; i++) if (l[i].id === rec.id) { l[i] = rec; found = true; }
+    if (!found) l.unshift(rec);
+    saveHist(l.slice(0, 100));
+  }
+  function openHistory() {
+    closeOverlay();
+    var sheet = h("div", { class: "sheet" }, [h("h2", null, [t("saved")])]);
+    var l = loadHist().sort(function (a, b) { return b.saved - a.saved; });
+    if (!l.length) sheet.appendChild(h("div", { class: "hempty" }, [t("no_saved")]));
+    l.forEach(function (rec) {
+      var inf = rec.info || {};
+      var main = h("button", { class: "hmain", onclick: function () {
+        state = { id: rec.id, lang: state.lang, step: "result", info: JSON.parse(JSON.stringify(inf)), answers: JSON.parse(JSON.stringify(rec.answers || {})) };
+        save(); closeOverlay(); render();
+      } }, [
+        h("div", { class: "hn" }, [h("b", null, [inf.model || "—"]), h("span", null, [[inf.plate, inf.date].filter(Boolean).join(" · ")])]),
+        h("div", { class: "hp", style: "color:" + rec.color }, [String(rec.quality), h("small", null, ["%"])])
+      ]);
+      var del = h("button", { class: "hdel", "aria-label": t("del"), onclick: function () {
+        saveHist(loadHist().filter(function (x) { return x.id !== rec.id; }));
+        openHistory();
+      }, html: '<svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg>' });
+      sheet.appendChild(h("div", { class: "hrow" }, [main, del]));
+    });
+    var ov = h("div", { class: "ov", onclick: function (e) { if (e.target === ov) ov.remove(); } }, [sheet]);
+    document.body.appendChild(ov);
+  }
+
   function openCategories() {
     var sheet = h("div", { class: "sheet" }, [h("h2", null, [t("categories")])]);
     CATS.forEach(function (c, i) {
@@ -294,6 +336,7 @@
 
   function resultView(app) {
     var r = Core.calc(DATA, CFG, state.answers);
+    upsertHist(r);
     var col = r.band.color;
     var info = state.info;
     var C = 2 * Math.PI * 104;
@@ -370,7 +413,8 @@
     });
 
     main.appendChild(h("div", { class: "note" }, [t("disclaimer")]));
-    main.appendChild(h("button", { class: "btn red", onclick: function () { share(r); } }, [t("share")]));
+    main.appendChild(h("button", { class: "btn red", onclick: function () { exportPdf(r); } }, [t("share")]));
+    main.appendChild(h("button", { class: "btn ghost", onclick: function () { copyText(report(r)); } }, [t("copy_text")]));
     main.appendChild(h("button", { class: "btn ghost", onclick: function () { go(CATS.length - 1); } }, [t("edit")]));
     main.appendChild(h("button", { class: "btn ghost", onclick: newInspection }, [t("new_check")]));
     app.appendChild(main);
@@ -394,14 +438,79 @@
     }
     return lines.join("\n");
   }
-  function share(r) {
+  function copyText(text) {
+    var done = false;
+    try { done = !!(navigator.clipboard && navigator.clipboard.writeText); } catch (e) {}
+    function legacy() {
+      var ta = h("textarea", { style: "position:fixed;opacity:0" }); ta.value = text;
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); toast(t("copied")); } catch (e) {}
+      ta.remove();
+    }
+    if (done) navigator.clipboard.writeText(text).then(function () { toast(t("copied")); }, legacy);
+    else legacy();
+  }
+  function esc(v) {
+    return String(v == null ? "" : v).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
+  }
+  function reportHtml(r) {
+    var i = state.info, col = r.band.color, b = [];
+    b.push('<!doctype html><html><head><meta charset="utf-8"><style>' +
+      'body{font-family:sans-serif;color:#15151a;font-size:12.5px;line-height:1.4;margin:0}' +
+      '.br{font-size:11px;letter-spacing:.3em;font-weight:700;color:#bb0a30;text-transform:uppercase}' +
+      'h1{font-size:24px;margin:4px 0 2px}h2{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#555;margin:22px 0 8px;border-bottom:1px solid #ccc;padding-bottom:4px}' +
+      'h3{font-size:12px;color:#bb0a30;margin:12px 0 4px;text-transform:uppercase;letter-spacing:.08em}' +
+      '.m{color:#555}.sc{display:flex;align-items:center;gap:22px;margin:14px 0 4px}' +
+      '.big{font-size:46px;font-weight:300;line-height:1}.v{font-weight:700;letter-spacing:.08em;text-transform:uppercase}' +
+      '.row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px solid #e4e4e8;page-break-inside:avoid}' +
+      '.tr{height:5px;background:#e4e4e8;margin:3px 0 8px}.tr i{display:block;height:100%}' +
+      '.c{white-space:nowrap;color:#555}.crit{border:1px solid #d11;padding:8px 10px;margin-top:12px;color:#a00}.crit li{margin:2px 0}' +
+      '.f{margin-top:22px;color:#777;font-size:10.5px}' +
+      '</style></head><body>');
+    b.push('<div class="br">CarCheck</div><div class="m">' + esc(t("pdf_title")) + '</div>');
+    b.push('<h1>' + esc(i.model || "—") + '</h1>');
+    b.push('<div class="m">' + esc([i.year, i.engine].filter(Boolean).join(" · ")) + '</div>');
+    var meta = ["VIN " + (i.vin || "—"), i.plate, i.date];
+    if (i.mileage) meta.push(t("pdf_mileage") + ": " + i.mileage + " km");
+    if (+i.price > 0) meta.push(t("pdf_price") + ": " + fmt(+i.price));
+    b.push('<div class="m">' + esc(meta.filter(Boolean).join(" · ")) + '</div>');
+    b.push('<div class="sc"><div class="big" style="color:' + col + '">' + r.quality + '%</div><div><div style="font-size:22px;font-weight:700;color:' + col + '">' + r.score.toFixed(1) + ' / 10</div><div class="v" style="color:' + col + '">' + esc(t("verdict_" + r.band.key)) + '</div></div></div>');
+    if (r.answered < r.total) b.push('<div class="m">' + esc(fill(t("unanswered"), { n: r.total - r.answered })) + '</div>');
+    if (r.crit.length) {
+      b.push('<div class="crit"><b>' + esc(t("crit_title")) + '</b><ul>');
+      r.crit.forEach(function (f) { b.push('<li>' + esc(L(f.item)) + '</li>'); });
+      b.push('</ul></div>');
+    }
+    b.push('<h2>' + esc(t("repair")) + '</h2>');
+    b.push('<div class="row"><span>' + esc(r.repairMax ? fmt(r.repairMin) + " – " + fmt(r.repairMax) : fmt(0)) + '</span><span class="c">' + esc(t("repair_avg")) + ': ' + esc(fmt(r.repairMid)) + '</span></div>');
+    if (+i.price > 0) b.push('<div class="row"><span>' + esc(t("price_total")) + '</span><span class="c">' + esc(fmt(+i.price + r.repairMid)) + '</span></div>');
+    b.push('<h2>' + esc(t("cat_quality")) + '</h2>');
+    r.cats.forEach(function (c) {
+      if (c.pct == null) return;
+      var bc = Core.bandFor(c.pct, CFG).color;
+      b.push('<div style="page-break-inside:avoid"><div class="row" style="border:0;padding-bottom:0"><span>' + esc(L(c.cat)) + '</span><b style="color:' + bc + '">' + c.pct + '%</b></div><div class="tr"><i style="width:' + c.pct + '%;background:' + bc + '"></i></div></div>');
+    });
+    [["defects", true], ["open_tasks", false]].forEach(function (sec) {
+      var list = r.failed.filter(function (f) { return (f.cat.scored !== false) === sec[1]; });
+      if (!list.length) { if (sec[1]) b.push('<h2>' + esc(t("defects")) + '</h2><div class="m">' + esc(t("no_defects")) + '</div>'); return; }
+      b.push('<h2>' + esc(t(sec[0])) + '</h2>');
+      var last = null;
+      list.forEach(function (f) {
+        if (f.cat !== last) { b.push('<h3>' + esc(L(f.cat)) + '</h3>'); last = f.cat; }
+        b.push('<div class="row"><span>' + (f.item.crit ? '<b style="color:#bb0a30">! </b>' : '') + esc(L(f.item)) + '</span><span class="c">' + (f.item.cost ? esc(money(f.item.cost)) : '') + '</span></div>');
+      });
+    });
+    b.push('<div class="f">' + esc(t("disclaimer")) + '</div></body></html>');
+    return b.join("");
+  }
+  function exportPdf(r) {
+    var i = state.info;
+    var name = "CarCheck_" + (i.plate || i.vin || "report").replace(/[^A-Za-z0-9]+/g, "") + "_" + (i.date || "");
+    if (window.Android && window.Android.printReport) { window.Android.printReport(reportHtml(r), name); return; }
+    if (window.Android && window.Android.share) { window.Android.share(report(r)); return; }
     var text = report(r);
-    if (window.Android && window.Android.share) { window.Android.share(text); return; }
-    if (navigator.share) { navigator.share({ text: text }).catch(function () {}); return; }
-    var ta = h("textarea", { style: "position:fixed;opacity:0" }); ta.value = text;
-    document.body.appendChild(ta); ta.select();
-    try { document.execCommand("copy"); toast(t("copied")); } catch (e) {}
-    ta.remove();
+    if (navigator.share) { navigator.share({ text: text }).catch(function () { copyText(text); }); return; }
+    copyText(text);
   }
 
   render();
