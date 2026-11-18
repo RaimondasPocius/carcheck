@@ -46,7 +46,7 @@ window.CHECKLIST = {
       {"id": "g10", "w": 1, "crit": false, "cost": [100, 800], "lt": "Ratlankiai be įtrūkimų, deformacijų ir stiprių pažeidimų", "en": "Wheels have no cracks, bends or heavy damage"},
       {"id": "g11", "w": 1, "crit": false, "cost": [30, 200], "lt": "Yra atsarginis ratas ar remonto komplektas, domkratas, raktas, apsauginių varžtų raktelis", "en": "Spare wheel or repair kit, jack, wheel brace and locking-bolt key are present"}
     ]},
-    {"key": "e", "scored": true, "lt": "Variklio skyrius (šaltas variklis)", "en": "Engine bay (cold engine)", "items": [
+    {"key": "e", "scored": true, "service": true, "serviceCost": [300, 4000], "lt": "Variklio skyrius (šaltas variklis)", "en": "Engine bay (cold engine)", "items": [
       {"id": "e01", "w": 2, "crit": false, "cost": null, "lt": "Variklis atvykus buvo šaltas (nebuvo pašildytas prieš apžiūrą)", "en": "Engine was cold on arrival (not pre-warmed before the inspection)"},
       {"id": "e02", "w": 3, "crit": false, "cost": [200, 3500], "lt": "Alyvos lygis tinkamas, spalva švari, nėra metalo drožlių ar nuosėdų", "en": "Oil level correct, colour clean, no metal particles or sludge"},
       {"id": "e03", "w": 3, "crit": true, "cost": [1200, 3500], "lt": "Po alyvos kamšteliu nėra pieno spalvos emulsijos (galvutės tarpiklis)", "en": "No milky emulsion under the oil filler cap (head gasket)"},
@@ -67,16 +67,12 @@ window.CHECKLIST = {
       {"id": "s03", "w": 2, "crit": false, "cost": [150, 1200], "lt": "Laisva eiga stabili, variklis nevibruoja ir nešokinėja", "en": "Idle is stable, engine does not shake or hunt"},
       {"id": "s04", "w": 3, "crit": false, "cost": [300, 3500], "lt": "Išmetamosiose dujose nėra mėlynų (alyva), juodų (kuras) ar baltų (aušinimo skystis) dūmų", "en": "No blue (oil), black (fuel) or white (coolant) smoke from the exhaust"},
       {"id": "s05", "w": 3, "crit": false, "cost": [300, 4000], "lt": "Nėra beldimo, tarškėjimo, cypimo ar ūžimo šildant variklį", "en": "No knocking, ticking, whining or squealing as the engine warms up"},
-      {"id": "s06", "w": 2, "crit": false, "cost": null, "lt": "Balto popieriaus lapo testas prie išmetimo: nėra alyvos ar vandens lašų", "en": "White paper test at the exhaust: no oil or water drops"},
       {"id": "s07", "w": 2, "crit": false, "cost": [150, 500], "lt": "Variklis įšyla per normalų laiką, temperatūros rodyklė stabili", "en": "Engine warms up in normal time, temperature gauge steady"},
       {"id": "s08", "w": 1, "crit": false, "cost": [150, 600], "lt": "Aušinimo ventiliatoriai įsijungia ir išsijungia laiku", "en": "Cooling fans switch on and off correctly"},
-      {"id": "s09", "w": 3, "crit": false, "cost": [100, 2000], "lt": "Paleidus užgęsta visos lemputės (variklio, EPC, ABS, oro pagalvių)", "en": "All warning lights go out after start (engine, EPC, ABS, airbag)"},
-      {"id": "s10", "w": 2, "crit": false, "cost": [200, 1500], "lt": "Išmetimo sistema sandari, be burbuliavimo ar rūdžių; katalizatorius/DPF be klaidų", "en": "Exhaust is sealed, no rumbling or rust; catalyst/DPF without faults"},
-      {"id": "s11", "w": 2, "crit": false, "cost": [500, 3000], "lt": "Dyzelis: nėra DPF, EGR ar AdBlue įspėjimų, nėra daug dūmų greitėjant", "en": "Diesel: no DPF, EGR or AdBlue warnings, no heavy smoke on acceleration"}
+      {"id": "s10", "w": 2, "crit": false, "cost": [200, 1500], "lt": "Išmetimo sistema sandari, be burbuliavimo ar rūdžių; katalizatorius/DPF be klaidų", "en": "Exhaust is sealed, no rumbling or rust; catalyst/DPF without faults"}
     ]},
     {"key": "i", "scored": true, "lt": "Salonas", "en": "Interior", "items": [
       {"id": "i01", "w": 3, "crit": true, "cost": [500, 4000], "lt": "Nėra pelėsio ar drėgmės kvapo, kilimėliai ir grindys sausi (potvynio požymiai)", "en": "No mould or damp smell, carpets and floor dry (flood signs)"},
-      {"id": "i02", "w": 3, "crit": false, "cost": null, "lt": "Vairo, pedalų, vairuotojo sėdynės ir pavarų rankenėlės nusidėvėjimas atitinka ridą", "en": "Wear on steering wheel, pedals, driver seat and gear knob matches the mileage"},
       {"id": "i03", "w": 1, "crit": false, "cost": [150, 1500], "lt": "Sėdynės be plyšių ir dėmių, reguliavimas (elektrinis/atmintis) veikia", "en": "Seats without tears or stains, adjustment (electric/memory) works"},
       {"id": "i04", "w": 1, "crit": false, "cost": [150, 600], "lt": "Lubų apmušalas sausas, švarus, nenuvisęs", "en": "Headliner dry, clean, not sagging"},
       {"id": "i05", "w": 1, "crit": false, "cost": [100, 800], "lt": "Prietaisų skydelio ir durų apmušalų plastikai be įtrūkimų, netarška", "en": "Dashboard and door trims without cracks or rattles"},
@@ -84,12 +80,9 @@ window.CHECKLIST = {
       {"id": "i07", "w": 2, "crit": false, "cost": [150, 1500], "lt": "Kondicionierius per minutę šaldo, šildymas šildo, visi greičiai ir srautai veikia", "en": "A/C cools within a minute, heater works, all fan speeds and vents work"},
       {"id": "i08", "w": 1, "crit": false, "cost": [100, 600], "lt": "Visi langų pakėlėjai, centrinis užraktas, bagažinės ir degalų lankelio atidarymas veikia", "en": "All windows, central locking, boot and fuel flap release work"},
       {"id": "i09", "w": 1, "crit": false, "cost": [100, 1200], "lt": "Liukas/panoraminis stogas atsidaro ir užsidaro, drenažas neužsikimšęs", "en": "Sunroof/panoramic roof opens and closes, drains clear"},
-      {"id": "i10", "w": 1, "crit": false, "cost": [100, 500], "lt": "Sėdynių ir vairo šildymas, ambient apšvietimas veikia", "en": "Seat and steering heating, ambient lighting work"},
-      {"id": "i11", "w": 1, "crit": false, "cost": null, "lt": "Nėra cigarečių kvapo ar stipraus gaiviklio, maskuojančio kvapus", "en": "No cigarette smell or heavy air freshener masking odours"},
-      {"id": "i12", "w": 1, "crit": false, "cost": [50, 500], "lt": "Bagažinės kilimėlis sausas, bagažinės uždanga ir įrankiai vietoje", "en": "Boot carpet dry, load cover and tools in place"}
+      {"id": "i10", "w": 1, "crit": false, "cost": [100, 500], "lt": "Sėdynių ir vairo šildymas, ambient apšvietimas veikia", "en": "Seat and steering heating, ambient lighting work"}
     ]},
     {"key": "x", "scored": true, "lt": "Elektronika ir saugos sistemos", "en": "Electronics & safety systems", "items": [
-      {"id": "x01", "w": 3, "crit": false, "cost": [100, 1500], "lt": "Įjungus degimą užsidega, o paleidus užgęsta visos kontrolinės lemputės (nė viena nenuimta ar uždengta)", "en": "All warning lights come on at ignition and go out after start (none removed or covered)"},
       {"id": "x02", "w": 3, "crit": true, "cost": [300, 2500], "lt": "SRS (oro pagalvių) lemputė veikia normaliai, užgęsta, nėra užklijuota", "en": "SRS (airbag) light cycles normally and goes out, not taped over"},
       {"id": "x03", "w": 3, "crit": false, "cost": [200, 1500], "lt": "ABS/ESP/traukos kontrolės lemputės normalios", "en": "ABS/ESP/traction control lights normal"},
       {"id": "x04", "w": 2, "crit": false, "cost": [200, 2500], "lt": "Multimedija, ekranas, navigacija, Bluetooth ir garsiakalbiai veikia", "en": "Infotainment, screen, navigation, Bluetooth and speakers work"},
@@ -103,7 +96,7 @@ window.CHECKLIST = {
       {"id": "x12", "w": 1, "crit": false, "cost": [50, 300], "lt": "Garsinis signalas, vidaus apšvietimas, automatiniai valytuvai, lietaus/šviesos jutiklis veikia", "en": "Horn, interior lights, auto wipers, rain/light sensor work"},
       {"id": "x13", "w": 1, "crit": false, "cost": [100, 800], "lt": "Elektra sulankstomi veidrodžiai ir elektrinė bagažinė veikia", "en": "Power-fold mirrors and electric tailgate work"}
     ]},
-    {"key": "u", "scored": true, "lt": "Važiuoklė ir stabdžiai (apačia)", "en": "Underbody, brakes & suspension", "items": [
+    {"key": "u", "scored": true, "service": true, "serviceCost": [300, 3500], "lt": "Važiuoklė ir stabdžiai (apačia)", "en": "Underbody, brakes & suspension", "items": [
       {"id": "u01", "w": 3, "crit": false, "cost": [300, 3000], "lt": "Nėra rūdžių ant pagalbinių rėmų, grindų, slenksčių, stabdžių ir kuro vamzdelių", "en": "No rust on subframes, floor, sills, brake and fuel lines"},
       {"id": "u02", "w": 3, "crit": false, "cost": [200, 2000], "lt": "Nėra alyvos nuotėkių iš variklio, pavarų dėžės, diferencialo, vairo kartelės", "en": "No oil leaks from engine, gearbox, differential, steering rack"},
       {"id": "u03", "w": 2, "crit": false, "cost": [200, 800], "lt": "Stabdžių diskai lygūs, be gilių griovelių ar didelės briaunos", "en": "Brake discs smooth, no deep grooves or heavy lip"},
@@ -124,14 +117,12 @@ window.CHECKLIST = {
       {"id": "t02", "w": 3, "crit": false, "cost": [200, 2500], "lt": "Nėra galios praradimo ar avarinio režimo, droselio reakcija pastovi", "en": "No loss of power or limp mode, throttle response consistent"},
       {"id": "t03", "w": 3, "crit": false, "cost": [800, 4500], "lt": "Automatinė/DSG dėžė perjungia sklandžiai, nėra trūkčiojimo, slydimo ar vėlavimo įjungus D/R", "en": "Automatic/DSG shifts smoothly, no jerking, slipping or delay when selecting D/R"},
       {"id": "t04", "w": 3, "crit": false, "cost": [500, 2000], "lt": "Mechaninė dėžė: sankaba kimba normaliai, neslysta, nevibruoja, pavaros įsijungia be girgždėjimo", "en": "Manual: clutch bites normally, no slip or judder, gears engage without grinding"},
-      {"id": "t05", "w": 2, "crit": false, "cost": [200, 1500], "lt": "Kickdown ir rankinis (žirklių) režimas veikia, nėra pavarų dėžės klaidų", "en": "Kickdown and manual (paddle) mode work, no gearbox faults"},
       {"id": "t06", "w": 3, "crit": false, "cost": [150, 3000], "lt": "Variklio temperatūra važiuojant stabili, neperkaista", "en": "Engine temperature stays stable while driving, no overheating"},
       {"id": "t07", "w": 3, "crit": false, "cost": null, "lt": "Važiuojant nėra alyvos slėgio ar kitų įspėjimų", "en": "No oil pressure or other warnings while driving"},
       {"id": "t08", "w": 2, "crit": false, "cost": [500, 2500], "lt": "Turbina: slėgis kyla tolygiai, nėra švilpimo ar šuoliavimo", "en": "Turbo: boost builds smoothly, no whistling or surging"},
       {"id": "t09", "w": 1, "crit": false, "cost": null, "lt": "Degalų sąnaudos pagal kompiuterį realios šiam modeliui", "en": "Fuel consumption on the trip computer is realistic for this model"},
       {"id": "t10", "w": 1, "crit": false, "cost": [100, 600], "lt": "Pastovaus greičio palaikymas ir greičio ribotuvas veikia", "en": "Cruise control and speed limiter work"},
-      {"id": "t11", "w": 1, "crit": false, "cost": [100, 800], "lt": "Šiltas variklis užsiveda iš naujo po 10 min be problemų", "en": "Warm engine restarts after 10 minutes without problems"},
-      {"id": "t12", "w": 2, "crit": false, "cost": null, "lt": "Važiuota ne mažiau 20–30 min: miestas, magistralė, nelygus kelias, įkalnė", "en": "Drove for at least 20–30 min: city, motorway, rough road, hill"}
+      {"id": "t11", "w": 1, "crit": false, "cost": [100, 800], "lt": "Šiltas variklis užsiveda iš naujo po 10 min be problemų", "en": "Warm engine restarts after 10 minutes without problems"}
     ]},
     {"key": "h", "scored": true, "lt": "Bandomasis važiavimas: valdymas ir triukšmai", "en": "Test drive: handling & noise", "items": [
       {"id": "h01", "w": 2, "crit": false, "cost": [80, 600], "lt": "Automobilis važiuoja tiesiai, netraukia į šoną", "en": "Car tracks straight, no pulling to either side"},
@@ -146,23 +137,18 @@ window.CHECKLIST = {
       {"id": "h10", "w": 1, "crit": false, "cost": [300, 1500], "lt": "Drive Select / adaptyvūs amortizatoriai keičia važiavimo pojūtį", "en": "Drive Select / adaptive dampers change the ride as expected"},
       {"id": "h11", "w": 1, "crit": false, "cost": [50, 400], "lt": "Salone nėra vėjo švilpimo, tarškėjimo ar ūžesio", "en": "No wind whistle, rattles or drone in the cabin"}
     ]},
-    {"key": "a", "scored": true, "lt": "Dažnos problemos pagal tipą", "en": "Common issues by type", "items": [
-      {"id": "a01", "w": 3, "crit": false, "cost": [1500, 3500], "lt": "Turbo benzininis / tiesioginio įpurškimo variklis: alyvos sąnaudos ≤ 0,5 l/1000 km (paklausti savininko, patikrinti lygį)", "en": "Turbo petrol / direct-injection engine: oil consumption ≤ 0.5 l/1000 km (ask the owner, check the level)"},
-      {"id": "a02", "w": 3, "crit": false, "cost": [1200, 2500], "lt": "Senesnis benzininis variklis su grandine: grandinė/įtempėjas keisti arba šaltu startu nėra barbenimo", "en": "Older petrol engine with timing chain: chain/tensioner replaced or no rattle on cold start"},
-      {"id": "a03", "w": 2, "crit": false, "cost": [300, 900], "lt": "Tiesioginio įpurškimo nuosėdos: laisva eiga be drebėjimo ir nedegimų", "en": "Direct-injection carbon build-up: idle without shake or misfires"},
-      {"id": "a04", "w": 3, "crit": false, "cost": [250, 500], "lt": "Dviejų sankabų (DSG/DCT) dėžė: alyva ir filtras keisti pagal gamintojo reglamentą (dažnai kas 60 000 km), yra įrašai", "en": "Dual-clutch (DSG/DCT) gearbox: oil and filter changed per manufacturer schedule (often every 60,000 km), records exist"},
-      {"id": "a05", "w": 3, "crit": false, "cost": [1500, 3500], "lt": "Dviejų sankabų dėžė su sausa sankaba: nėra trūkčiojimo kamštyje, mechatronikos ar sankabos klaidų", "en": "Dry-clutch dual-clutch gearbox: no judder in stop-go traffic, no mechatronic or clutch faults"},
-      {"id": "a06", "w": 2, "crit": false, "cost": [200, 600], "lt": "Visų ratų pavara (jei yra): sankabos/diferencialo alyva keista pagal reglamentą, nėra nuotėkių", "en": "AWD (if fitted): coupling/differential oil changed per schedule, no leaks"},
-      {"id": "a07", "w": 2, "crit": false, "cost": [400, 1200], "lt": "Plastikinis vandens siurblys/termostato korpusas nelaša, aušinimo skysčio papildyti nereikia", "en": "Plastic water pump/thermostat housing not leaking, no coolant top-ups needed"},
-      {"id": "a08", "w": 1, "crit": false, "cost": [150, 500], "lt": "PCV/karterio ventiliacija ir vakuuminės žarnelės: nėra švilpimo, per didelių alyvos sąnaudų", "en": "PCV/crankcase breather and vacuum hoses: no whistling, no excessive oil use"},
-      {"id": "a09", "w": 3, "crit": false, "cost": [800, 3500], "lt": "Dyzelis: DPF/EGR/AdBlue (SCR) be klaidų, taršos programinė įranga atnaujinta (jei buvo kampanija)", "en": "Diesel: DPF/EGR/AdBlue (SCR) fault-free, emissions software update done (if there was a recall)"},
-      {"id": "a10", "w": 2, "crit": false, "cost": [900, 2500], "lt": "Mechanika su dvigubos masės smagračiu: nėra vibracijos ir barškėjimo laisva eiga / išjungus sankabą", "en": "Manual with dual-mass flywheel: no vibration or rattle at idle / clutch out"},
-      {"id": "a11", "w": 2, "crit": false, "cost": [500, 1500], "lt": "Pneumatinė pakaba (jei yra): kompresorius, pagalvės sandarios, aukštis pastovus", "en": "Air suspension (if fitted): compressor and bags sealed, ride height stable"},
-      {"id": "a12", "w": 2, "crit": false, "cost": [300, 2500], "lt": "Elektroniniai moduliai veikia, kodavimai/papildymai legalūs (patikra gamintojo lygio diagnostika)", "en": "Electronic modules work, coding/retrofits legitimate (checked with manufacturer-grade diagnostics)"},
-      {"id": "a13", "w": 1, "crit": false, "cost": [500, 2500], "lt": "Nėra LED/adaptyvių žibintų klaidų (žibintų keitimas gali būti labai brangus)", "en": "No LED/adaptive headlight faults (replacement can be very expensive)"},
-      {"id": "a14", "w": 2, "crit": false, "cost": null, "lt": "Oficiali serviso istorija pagal VIN (atstovybės išrašas), atviros kampanijos", "en": "Official service history by VIN (dealer print-out), open campaigns"},
-      {"id": "a15", "w": 1, "crit": false, "cost": [300, 900], "lt": "Elektrinio stovėjimo stabdžio varikliukai ir galiniai suportai veikia be klaidų", "en": "EPB motors and rear calipers work without faults"},
-      {"id": "a16", "w": 1, "crit": false, "cost": null, "lt": "Sportinė/aukštesnė komplektacija atitinka VIN opcijas (ne tik ženkliukai)", "en": "Sport/higher trim matches the VIN options (not just badges)"}
+    {"key": "a", "scored": true, "lt": "Akivaizdžios problemos", "en": "Obvious problems", "items": [
+      {"id": "a01", "w": 3, "crit": false, "cost": [1500, 3500], "lt": "Pardavėjas patvirtina, kad tarp alyvos keitimų jos papildyti nereikia (sąnaudos iki ~0,5 l/1000 km), o lazdelėje lygis tarp ženklų", "en": "Seller confirms oil does not need topping up between changes (up to ~0.5 l/1000 km) and the dipstick level is between the marks"},
+      {"id": "a02", "w": 3, "crit": false, "cost": [1500, 4500], "lt": "Lėtai važiuojant kamštyje ar įkalnėje dėžė netrūkčioja, nevirpa ir nėra pauzės įjungus važiavimą", "en": "In slow stop-go traffic or on a hill the gearbox does not judder or shake, with no delay when engaging drive"},
+      {"id": "a03", "w": 3, "crit": false, "cost": [150, 1800], "lt": "Automobiliui pastovėjus 5–10 min. po juo nėra naujų dėmių ar balų (alyva, aušinimo skystis, kuras)", "en": "After the car has stood for 5–10 minutes there are no fresh stains or puddles under it (oil, coolant, fuel)"},
+      {"id": "a04", "w": 2, "crit": false, "cost": [400, 1500], "lt": "Salone ir variklio skyriuje nėra saldaus aušinimo skysčio kvapo, langai be priežasties neaprasoja", "en": "No sweet coolant smell in the cabin or engine bay, and windows do not fog up for no reason"},
+      {"id": "a05", "w": 2, "crit": false, "cost": [200, 2500], "lt": "Važiuojant nėra degėsių, perkaitusios sankabos ar stabdžių kvapo", "en": "No burning, overheated clutch or brake smell while driving"},
+      {"id": "a06", "w": 2, "crit": false, "cost": [150, 900], "lt": "Pilnai pasukus vairą mažu greičiu nėra spragsėjimo ar kalenimo (pusašių šarnyrai)", "en": "No clicking or knocking at full steering lock at low speed (CV joints)"},
+      {"id": "a07", "w": 2, "crit": false, "cost": [200, 1500], "lt": "Perjungus iš P/N į D ar R nėra smūgio ar stipraus dunkstelėjimo (atramos, transmisija)", "en": "No jolt or heavy clunk when shifting from P/N into D or R (mounts, transmission)"},
+      {"id": "a08", "w": 2, "crit": false, "cost": [100, 400], "lt": "Variklis įšilus šildymas greitai šildo, temperatūros ir kuro rodyklės juda normaliai", "en": "Heater warms quickly once the engine is warm, and the temperature and fuel gauges move normally"},
+      {"id": "a09", "w": 2, "crit": false, "cost": [200, 1500], "lt": "Laisva eiga ir apsukų matuoklis stabilūs įjungus kondicionierių ir šviesas, variklis neužgęsta", "en": "Idle and rev counter stay stable with A/C and lights on, and the engine does not stall"},
+      {"id": "a10", "w": 1, "crit": false, "cost": [100, 600], "lt": "Išjungus variklį nėra šnypštimo, cypimo ar bėgančio skysčio garso", "en": "No hissing, whining or running-liquid sounds after the engine is switched off"},
+      {"id": "a11", "w": 2, "crit": false, "cost": null, "lt": "Pardavėjas leidžia apžiūrėti ramiai, važiuoti ilgiau nei 15 min. ir nesipriešina nepriklausomai patikrai", "en": "Seller allows an unhurried inspection, a test drive longer than 15 minutes and does not object to an independent check"}
     ]},
     {"key": "k", "scored": true, "lt": "Diagnostika ir servisas", "en": "Diagnostics & workshop check", "items": [
       {"id": "k01", "w": 3, "crit": false, "cost": [100, 2500], "lt": "OBD skaitytuvas: nėra išsaugotų ar laukiančių klaidų kodų, parengties monitoriai užbaigti", "en": "OBD scan: no stored or pending fault codes, readiness monitors complete"},
@@ -176,18 +162,6 @@ window.CHECKLIST = {
       {"id": "k09", "w": 1, "crit": false, "cost": [100, 450], "lt": "Įkrovimo įtampa 13,8–14,7 V, starteris ir akumuliatorius patikrinti", "en": "Charging voltage 13.8–14.7 V, starter and battery tested"},
       {"id": "k10", "w": 1, "crit": false, "cost": [60, 120], "lt": "Ratų geometrija išmatuota, nukrypimų nėra", "en": "Wheel alignment measured, no deviations"},
       {"id": "k11", "w": 3, "crit": false, "cost": null, "lt": "Meistro išvada: pirkti galima, didelių defektų nerasta", "en": "Inspector's verdict: OK to buy, no major defects found"}
-    ]},
-    {"key": "p", "scored": false, "lt": "Sandoris ir po pirkimo", "en": "Deal & after purchase", "items": [
-      {"id": "p01", "w": 2, "crit": false, "cost": null, "lt": "Kaina palyginta su 5+ panašių skelbimų (Autoplius, Autogidas, mobile.de, AutoScout24) ir yra pagrįsta", "en": "Price compared with 5+ similar listings (Autoplius, Autogidas, mobile.de, AutoScout24) and is fair"},
-      {"id": "p02", "w": 1, "crit": false, "cost": null, "lt": "Kaina derėta remiantis rastais trūkumais", "en": "Price negotiated based on the faults found"},
-      {"id": "p03", "w": 3, "crit": false, "cost": null, "lt": "Pirkimo-pardavimo sutartyje nurodyta VIN, rida, kaina, būklė; abiejų šalių duomenys", "en": "Sale contract states VIN, mileage, price, condition; both parties' details"},
-      {"id": "p04", "w": 2, "crit": false, "cost": null, "lt": "Mokėjimas pavedimu ar atsekamu būdu, avansas tik pamačius automobilį", "en": "Payment by bank transfer or traceable method, deposit only after seeing the car"},
-      {"id": "p05", "w": 3, "crit": false, "cost": null, "lt": "TPVCA draudimas sudarytas prieš pradedant važiuoti", "en": "Compulsory liability insurance (TPVCA) arranged before driving"},
-      {"id": "p06", "w": 2, "crit": false, "cost": null, "lt": "Perregistravimas Regitroje per nustatytą terminą (patikrinti dabartinius terminus ir mokesčius)", "en": "Re-registration with Regitra within the deadline (check current deadlines and fees)"},
-      {"id": "p07", "w": 1, "crit": false, "cost": [50, 150], "lt": "Techninė apžiūra galioja dar ≥12 mėn. arba suplanuota", "en": "Technical inspection valid for 12+ more months or scheduled"},
-      {"id": "p08", "w": 1, "crit": false, "cost": [250, 800], "lt": "Numatytas pirmas aptarnavimas: alyva, filtrai, stabdžių skystis, dėžės alyva (jei istorija nežinoma)", "en": "First service planned: oil, filters, brake fluid, gearbox oil (if history unknown)"},
-      {"id": "p09", "w": 1, "crit": false, "cost": null, "lt": "Garantijos sąlygos perskaitytos (ką ji neapima)", "en": "Warranty terms read (what is excluded)"},
-      {"id": "p10", "w": 2, "crit": false, "cost": null, "lt": "Gauti visi raktai, serviso knygelė, instrukcija, apsauginių varžtų raktelis, sąskaitos", "en": "Received all keys, service book, manual, locking-bolt key, invoices"}
     ]}
   ]
 };

@@ -39,3 +39,11 @@ Score 1–10 = quality / 10. Green "worth buying" at ≥ 85 %. Repair investment
 - Burger button (top left) lists saved reports; a report is saved automatically when the result screen is opened. Stored in the phone's WebView localStorage.
 - "Create PDF report" opens Android's print dialog: choose **Save as PDF** (then share the file from Files).
 - PDF layout: `reportHtml()` in `www/app.js`; native bridge: `printReport()` in `MainActivity.java`.
+
+## Workshop inspection (engine bay and underbody)
+These two categories have a switch "Workshop inspection used". On: instead of the checklist you give the workshop's verdict 1 (bad) to 10 (good). Off: the normal checklist.
+- Mark a category as switchable in `www/data/checklist.js` with `"service": true, "serviceCost": [min, max]` (repair range at rating 1).
+- Rating limits and caps are in `www/data/config.js` (`serviceBadRating`, `serviceCritRating`, `serviceCapMid`, `serviceCapPoor`).
+
+## Negotiation advice
+Shown on the result screen, in the PDF and in the copied text. Based on the repair estimate and the asking price. Tuning in `config.js`: `negWalkBelow`, `negWalkRepairShare`, `negMaxDiscount`, `negOpenExtra`.

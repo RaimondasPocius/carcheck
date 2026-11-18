@@ -17,13 +17,15 @@
     return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
   }
   function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-  function fresh() { return { id: uid(), lang: CFG.defaultLang, step: "info", info: { date: today() }, answers: {} }; }
+  function fresh() { return { id: uid(), lang: CFG.defaultLang, step: "info", info: { date: today() }, answers: {}, svc: {}, rate: {} }; }
   function load() {
     try { var s = localStorage.getItem(KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; }
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
   var state = load() || fresh();
   if (!state.id) state.id = uid();
+  if (!state.svc) state.svc = {};
+  if (!state.rate) state.rate = {};
   if (!state.info) state.info = {};
   if (!state.info.date) state.info.date = today();
   if (state.step !== "info" && state.step !== "result" && !CATS[state.step]) state.step = "info";
@@ -72,7 +74,12 @@
 
   // ---------- navigation ----------
   function go(step) { state.step = step; closeOverlay(); render(); }
-  function catAnswered(i) { return CATS[i].items.filter(function (it) { return state.answers[it.id]; }).length; }
+  function svcOn(cat) { return !!(cat.service && state.svc[cat.key]); }
+  function catAnswered(i) {
+    var c = CATS[i];
+    if (svcOn(c)) return state.rate[c.key] ? c.items.length : 0;
+    return c.items.filter(function (it) { return state.answers[it.id]; }).length;
+  }
   function isComplete(i) { return typeof i === "number" && catAnswered(i) === CATS[i].items.length; }
   function firstIncomplete() {
     for (var i = 0; i < CATS.length; i++) if (!isComplete(i)) return i;
@@ -126,7 +133,7 @@
   function saveHist(l) { try { localStorage.setItem(HKEY, JSON.stringify(l)); } catch (e) {} }
   function upsertHist(r) {
     var l = loadHist();
-    var rec = { id: state.id, saved: Date.now(), info: state.info, answers: state.answers, quality: r.quality, score: r.score, color: r.band.color };
+    var rec = { id: state.id, saved: Date.now(), info: state.info, answers: state.answers, svc: state.svc, rate: state.rate, quality: r.quality, score: r.score, color: r.band.color };
     var found = false;
     for (var i = 0; i < l.length; i++) if (l[i].id === rec.id) { l[i] = rec; found = true; }
     if (!found) l.unshift(rec);
@@ -140,7 +147,7 @@
     l.forEach(function (rec) {
       var inf = rec.info || {};
       var main = h("button", { class: "hmain", onclick: function () {
-        state = { id: rec.id, lang: state.lang, step: "result", info: JSON.parse(JSON.stringify(inf)), answers: JSON.parse(JSON.stringify(rec.answers || {})) };
+        state = { id: rec.id, lang: state.lang, step: "result", info: JSON.parse(JSON.stringify(inf)), answers: JSON.parse(JSON.stringify(rec.answers || {})), svc: JSON.parse(JSON.stringify(rec.svc || {})), rate: JSON.parse(JSON.stringify(rec.rate || {})) };
         save(); closeOverlay(); render();
       } }, [
         h("div", { class: "hn" }, [h("b", null, [inf.model || "—"]), h("span", null, [[inf.plate, inf.date].filter(Boolean).join(" · ")])]),
@@ -283,9 +290,16 @@
         h("span", null, ["– " + t("legend_na")])
       ])
     ]);
-    var list = h("div", { class: "card" });
-    cat.items.forEach(function (it) { list.appendChild(itemRow(it, i)); });
-    main.appendChild(list);
+    var lgEl = main.querySelector(".legend");
+    if (cat.service) main.insertBefore(svcToggle(cat), lgEl);
+    if (svcOn(cat)) {
+      lgEl.remove();
+      main.appendChild(rateCard(cat, i));
+    } else {
+      var list = h("div", { class: "card" });
+      cat.items.forEach(function (it) { list.appendChild(itemRow(it, i)); });
+      main.appendChild(list);
+    }
     app.appendChild(main);
 
     var left = h("div", { class: "left" });
@@ -305,6 +319,35 @@
       ui.prog = np;
     };
     ui.refresh();
+  }
+
+  function svcToggle(cat) {
+    var on = svcOn(cat);
+    return h("div", null, [
+      h("button", { class: "svc" + (on ? " on" : ""), "aria-pressed": on ? "true" : "false", onclick: function () {
+        state.svc[cat.key] = !on; save(); render();
+      } }, [h("span", { class: "sw" }), h("span", null, [t("svc_toggle")])]),
+      h("div", { class: "hintline", style: "margin:-4px 0 14px" }, [on ? t("svc_hint_on") : t("svc_hint_off")])
+    ]);
+  }
+  function rateCard(cat, ci) {
+    var grid = h("div", { class: "rates" }), btns = [];
+    function paint() {
+      var v = state.rate[cat.key] || 0;
+      btns.forEach(function (b, k) { b.setAttribute("aria-pressed", v === k + 1 ? "true" : "false"); });
+    }
+    for (var n = 1; n <= 10; n++) (function (n) {
+      var b = h("button", { class: "rate", style: "--c:" + Core.bandFor(n * 10, CFG).color, onclick: function () {
+        var was = isComplete(ci);
+        if (state.rate[cat.key] === n) delete state.rate[cat.key]; else state.rate[cat.key] = n;
+        save(); paint(); ui.refresh();
+        if (!was && isComplete(ci)) setTimeout(function () { if (state.step === ci && isComplete(ci)) goNext(); }, 700);
+      } }, [String(n)]);
+      btns.push(b); grid.appendChild(b);
+    })(n);
+    paint();
+    return h("div", { class: "card" }, [h("h2", null, [t("svc_rate_title")]), grid,
+      h("div", { class: "scale" }, [h("span", null, [t("svc_bad")]), h("span", null, [t("svc_good")])])]);
   }
 
   function itemRow(it, ci) {
@@ -335,7 +378,7 @@
   }
 
   function resultView(app) {
-    var r = Core.calc(DATA, CFG, state.answers);
+    var r = Core.calc(DATA, CFG, state.answers, state.svc, state.rate);
     upsertHist(r);
     var col = r.band.color;
     var info = state.info;
@@ -383,6 +426,7 @@
       rep.appendChild(h("div", { class: "kv" }, [h("span", null, [fill(t("repair_share"), { p: share })]), h("span", { class: share > CFG.repairWarnPct ? "warnpct" : "" }, [share > CFG.repairWarnPct ? "⚠" : "✓"])]));
     }
     main.appendChild(rep);
+    main.appendChild(negCard(r));
 
     // category bars
     var bars = h("div", { class: "card" }, [h("h2", null, [t("cat_quality")])]);
@@ -421,6 +465,75 @@
   }
 
   // ---------- report / share ----------
+  // ---------- negotiation advice ----------
+  function kv(a, b) { return h("div", { class: "kv" }, [h("span", null, [a]), h("span", null, [b])]); }
+  function negBuild(r) {
+    var price = +state.info.price || 0;
+    var n = Core.negotiate(r, price, CFG);
+    var seen = {}, names = [];
+    n.points.forEach(function (p) { var nm = L(p.cat).replace(/\s*\(.*?\)/g, ""); if (!seen[nm]) { seen[nm] = 1; names.push(nm); } });
+    var say = "";
+    if (n.hi > 0 && names.length) {
+      say = fill(t(price > 0 ? "neg_say_price" : "neg_say_noprice"),
+        { cats: names.slice(0, 3).join(", "), lo: fmt(n.lo), hi: fmt(n.hi), open: fmt(n.open), mid: fmt(n.mid) });
+    }
+    return { n: n, price: price, say: say };
+  }
+  function negCard(r) {
+    var b = negBuild(r), n = b.n;
+    var card = h("div", { class: "card" }, [h("h2", null, [t("neg_title")])]);
+    if (n.level === "walk") card.appendChild(h("div", { class: "crit", style: "margin-bottom:12px" }, [t("neg_walk")]));
+    if (n.level === "none") card.appendChild(h("div", { class: "hintline", style: "margin:0" }, [t("neg_none")]));
+    if (!n.hi) return card;
+    card.appendChild(kv(t("neg_discount"), fmt(n.lo) + " – " + fmt(n.hi)));
+    if (b.price > 0) {
+      card.appendChild(kv(t("neg_open"), fmt(n.open)));
+      card.appendChild(kv(t("neg_target"), fmt(n.target)));
+      card.appendChild(kv(t("neg_ceiling"), fmt(n.ceiling)));
+    } else {
+      card.appendChild(h("div", { class: "hintline" }, [t("neg_noprice")]));
+    }
+    var pts = h("div", { class: "list", style: "margin-top:14px" }, [h("h2", null, [t("neg_points")])]);
+    n.points.slice(0, 5).forEach(function (p) {
+      pts.appendChild(h("div", { class: "d" }, [h("div", { class: "tx" }, [L(p.item)]), h("div", { class: "c" }, [money(p.item.cost)])]));
+    });
+    card.appendChild(pts);
+    if (b.say) {
+      card.appendChild(h("h2", { style: "margin-top:16px" }, [t("neg_say")]));
+      card.appendChild(h("div", { class: "say" }, [b.say]));
+      card.appendChild(h("button", { class: "btn ghost", onclick: function () { copyText(b.say); } }, [t("neg_copy")]));
+    }
+    card.appendChild(h("div", { class: "hintline" }, [t("neg_note")]));
+    return card;
+  }
+  function negLines(r) {
+    var b = negBuild(r), n = b.n, o = [""];
+    o.push(t("neg_title") + ":");
+    if (n.level === "walk") o.push(t("neg_walk"));
+    if (n.level === "none") { o.push(t("neg_none")); return o; }
+    if (!n.hi) return o;
+    o.push(t("neg_discount") + ": " + fmt(n.lo) + " – " + fmt(n.hi));
+    if (b.price > 0) {
+      o.push(t("neg_open") + ": " + fmt(n.open));
+      o.push(t("neg_target") + ": " + fmt(n.target));
+      o.push(t("neg_ceiling") + ": " + fmt(n.ceiling));
+    }
+    if (b.say) { o.push(""); o.push(b.say); }
+    return o;
+  }
+  function negHtml(r) {
+    var b = negBuild(r), n = b.n, o = [];
+    o.push('<h2>' + esc(t("neg_title")) + '</h2>');
+    if (n.level === "walk") o.push('<div class="crit">' + esc(t("neg_walk")) + '</div>');
+    if (n.level === "none") { o.push('<div class="m">' + esc(t("neg_none")) + '</div>'); return o.join(""); }
+    if (!n.hi) return o.join("");
+    function row(a, c) { o.push('<div class="row"><span>' + esc(a) + '</span><span class="c">' + esc(c) + '</span></div>'); }
+    row(t("neg_discount"), fmt(n.lo) + " – " + fmt(n.hi));
+    if (b.price > 0) { row(t("neg_open"), fmt(n.open)); row(t("neg_target"), fmt(n.target)); row(t("neg_ceiling"), fmt(n.ceiling)); }
+    if (b.say) o.push('<div class="say">' + esc(b.say) + '</div>');
+    return o.join("");
+  }
+
   function report(r) {
     var i = state.info, lines = [];
     lines.push("CarCheck · " + (i.date || ""));
@@ -436,6 +549,7 @@
       lines.push(""); lines.push(t("defects") + ":");
       r.failed.forEach(function (f) { lines.push("- [" + L(f.cat) + "] " + L(f.item) + (f.item.cost ? " (" + money(f.item.cost) + ")" : "")); });
     }
+    negLines(r).forEach(function (l) { lines.push(l); });
     return lines.join("\n");
   }
   function copyText(text) {
@@ -465,7 +579,7 @@
       '.row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px solid #e4e4e8;page-break-inside:avoid}' +
       '.tr{height:5px;background:#e4e4e8;margin:3px 0 8px}.tr i{display:block;height:100%}' +
       '.c{white-space:nowrap;color:#555}.crit{border:1px solid #d11;padding:8px 10px;margin-top:12px;color:#a00}.crit li{margin:2px 0}' +
-      '.f{margin-top:22px;color:#777;font-size:10.5px}' +
+      '.f{margin-top:22px;color:#777;font-size:10.5px}.say{border:1px solid #bbb;padding:8px 10px;margin-top:8px;white-space:pre-wrap}' +
       '</style></head><body>');
     b.push('<div class="br">CarCheck</div><div class="m">' + esc(t("pdf_title")) + '</div>');
     b.push('<h1>' + esc(i.model || "—") + '</h1>');
@@ -484,6 +598,7 @@
     b.push('<h2>' + esc(t("repair")) + '</h2>');
     b.push('<div class="row"><span>' + esc(r.repairMax ? fmt(r.repairMin) + " – " + fmt(r.repairMax) : fmt(0)) + '</span><span class="c">' + esc(t("repair_avg")) + ': ' + esc(fmt(r.repairMid)) + '</span></div>');
     if (+i.price > 0) b.push('<div class="row"><span>' + esc(t("price_total")) + '</span><span class="c">' + esc(fmt(+i.price + r.repairMid)) + '</span></div>');
+    b.push(negHtml(r));
     b.push('<h2>' + esc(t("cat_quality")) + '</h2>');
     r.cats.forEach(function (c) {
       if (c.pct == null) return;
